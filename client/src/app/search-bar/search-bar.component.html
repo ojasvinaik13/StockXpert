@@ -1,0 +1,29 @@
+<div class="stocksearchtitle">STOCK SEARCH</div>
+<div class="col-md-3 col-7 searchcontainer">
+<form>
+<div class="input-group">
+    <input type="text" class="form-control" placeholder="Enter stock ticker symbol" [matAutocomplete]="auto" matInput [formControl]="myControl" >
+    <button class="btn" type="button" id="searchBtn" (click)= "getDetails()">
+      <i class="fas fa-search"></i>
+    </button>
+    <button class="btn" type="button" id="clearBtn">
+      <i class="fas fa-times"></i>
+    </button> 
+</div>
+<mat-autocomplete #auto="matAutocomplete" [displayWith]="callDisplay">
+    <mat-option *ngFor="let option of options" [value]="option">
+        <span id="search-option-ticker">{{option.ticker}}</span> | <span id="search-option-name">{{option.name}}</span>
+    </mat-option>
+  </mat-autocomplete>
+</form>
+</div>
+<!-- <mat-form-field>
+    <input type="text" placeholder="Enter stock ticker symbol" matInput [formControl]="myControl" [matAutocomplete]="auto">
+    <mat-autocomplete #auto="matAutocomplete">
+      <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+        {{ option.ticker }} - {{ option.name }}
+      </mat-option>
+    </mat-autocomplete>
+  </mat-form-field> -->
+<!-- (optionSelected)='selectOption($event.option.value)' -->
+<!-- {{option.ticker}}</span> | <span id="search-option-name">{{option.name}} -->

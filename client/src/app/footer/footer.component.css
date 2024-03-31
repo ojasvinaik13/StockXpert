@@ -1,0 +1,9 @@
+.customFooterclass{
+    background-color: rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    font-size: 70%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 5vh;
+}

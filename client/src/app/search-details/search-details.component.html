@@ -1,0 +1,192 @@
+<search-bar></search-bar>
+<!-- <mat-spinner [diameter]="100" *ngIf="showSpinner" class="myspinner"></mat-spinner> -->
+<div class = "container text-center" style="margin-top: -50px !important">
+    <div class="row" style="justify-content: center !important;">
+        <div class="col-md-3 col">
+            <div class="tickerrow">
+                <span class="tickertitle">{{ticker}}</span>
+                <span class="favstar" (click)="addToWatchlist()">
+                    <i *ngIf="!isfavorite" class="far fa-star"></i> 
+                    <i *ngIf="isfavorite" class="fas fa-star" style="color: #FFD43B;"></i>
+                </span>
+            </div>
+            <div class="companyName">{{details.companyDetailsModel.name}}</div>
+            <div class="stExCode">{{details.companyDetailsModel.exchange}}</div>
+            <div class="bsbuttons"><button type="button" class="btn btn-success">Buy</button><button 
+                type="button" class="btn btn-danger" *ngIf="alreadyBought">Sell</button>
+            </div>
+        </div>
+        <div class="col-md-3 col-3">
+            <img class="img-fluid" style="width: calc(3.8rem + 1.5vw);" src={{details.companyDetailsModel.logo}} alt="Logo"><br><br><br><br>
+            <div class="marketStatus text-success" *ngIf = "marketStatus">Market is Open</div>
+            <div class="marketStatus text-danger" *ngIf = "!marketStatus">Market Closed on {{marketShutTime}}</div>
+        </div>
+        <div class="col-md-3 col">
+            <div [ngClass]="{'lastPrice':true, 'text-success':details.stockQuoteModel.d>=0, 'text-danger':details.stockQuoteModel.d<0, 'fs-3':true}" >
+                {{details.stockQuoteModel.c}}
+            </div>
+            <span style="display: flex;justify-content: center;" 
+            [ngClass]="{'changeamt':true, 'text-success':details.stockQuoteModel.d>=0, 'text-danger':details.stockQuoteModel.d<0,'fs-5':true}">
+                <i [ngClass]="{'fas':true,'fa-sort-up':details.stockQuoteModel.d>=0,'fa-sort-down':details.stockQuoteModel.d<0}" 
+                [ngStyle]="{'align-self': details.stockQuoteModel.d>=0 ? 'flex-end': 'flex-start', 'margin-right':'5px'}"></i>
+                {{details.stockQuoteModel.d}}  ({{details.stockQuoteModel.dp}})
+            </span>
+            <div class="currentTimestamp">{{currentTimestamp}}</div>
+        </div>
+    </div>
+</div>
+<div class= "container" style="max-width: 1100px;">
+<mat-tab-group mat-stretch-tabs class="example-stretched-tabs">
+    <mat-tab label="Summary" > 
+        <div class="container">
+            <div class="row">
+                <div class="col" style="margin-top: 2%;">
+                    <div class="col-md-6 col-12" style="display: flex;flex-direction: column; align-items: center;">
+                        <div class="sprices"><span class="tsprices">High Price: </span>{{details.stockQuoteModel.h}}</div>
+                        <div class="sprices"><span class="tsprices">Low Price: </span>{{details.stockQuoteModel.l}}</div>
+                        <div class="sprices"><span class="tsprices">Open Price: </span>{{details.stockQuoteModel.o}}</div>
+                        <div class="sprices"><span class="tsprices">Prev. Close: </span>{{details.stockQuoteModel.pc}}</div>
+                    </div>
+                    <br>
+                    <div style="display: flex;flex-direction: column; align-items: center;">
+                        <div style="text-decoration: underline;">About the Company</div><br>
+                        <div class="sprices"><span class="tsprices">IPO Start Date: </span>{{details.companyDetailsModel.ipo}}</div>
+                        <div class="sprices"><span class="tsprices">Industry: </span>{{details.companyDetailsModel.finnhubIndustry}}</div>
+                        <div class="sprices"><span class="tsprices">Webpage: </span><a href="{{details.companyDetailsModel.weburl}}">
+                            {{details.companyDetailsModel.weburl}}</a></div>
+                        <div class="sprices tsprices">Company peers:</div>
+                        <div class="sprices"><span *ngFor="let item of details.peersModel.results"><a href="#"> {{item}}, </a></span></div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <highcharts-chart
+                    [Highcharts]="DailyHighcharts"
+                    [constructorType]="chartConstructor"
+                    [options]="dailyChartOptions"
+                    style="width: 100%; height: 400px; display: block;"
+                    ></highcharts-chart>
+                </div>
+            </div>
+        </div>
+    </mat-tab>
+    <mat-tab label="Top News"> 
+        <div class="container" style="margin-top: 10px;">
+            <div class="row justify-content-center">
+              <div class="col-md-6" *ngFor="let item of newNewsData" style="margin-bottom: 1%;">  
+                <a (click)="open(newsmodal);openmodal(item);" style="text-decoration: none;color: black">             
+                <div class="card mb-3 h-100" style="max-width: 540px; padding: 2%;">
+                    <div class="row g-0">
+                      <div class="col-md-4 d-flex justify-content-center align-items-center">
+                        <img src="{{item.imageUrl}}" style="border-radius: 5px; width: 70%;max-height: 5em;" class="img-fluid">
+                      </div>
+                      <div class="col-md-8 d-flex justify-content-center align-items-center">
+                        <div class="card-body">
+                          <p class="card-text">{{item.headline}}</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </a> 
+              </div>
+            </div>
+          </div>
+    </mat-tab>
+    <mat-tab label="Charts"> 
+        <highcharts-chart [Highcharts]="Highcharts" 
+        [constructorType]="chartConstructor" [options]="chartOptions" 
+        style="height: 550px; display: block;margin-top: 20px"></highcharts-chart> 
+    </mat-tab>
+    <mat-tab label="Insights"> 
+        <div class="container" style="margin-bottom: 50px;">
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-9 insitable">
+                    <div class="insititle">Insider Sentiments</div>
+                    <div class="row makeaborder">
+                        <div class="col makeitbold">{{details.companyDetailsModel.name}}</div>
+                        <div class="col makeitbold">MSPR</div>
+                        <div class="col makeitbold">Change</div>
+                    </div>
+                    <div class="row makeaborder">
+                        <div class="col makeitbold">Total</div>
+                        <div class="col" style="font-weight: 300;">{{tmspr}}</div>
+                        <div class="col" style="font-weight: 300;">{{tc}}</div>
+                    </div>
+                    <div class="row makeaborder">
+                        <div class="col makeitbold">Positive</div>
+                        <div class="col" style="font-weight: 300;">{{pmspr}}</div>
+                        <div class="col" style="font-weight: 300;">{{pc}}</div>
+                    </div>
+                    <div class="row makeaborder">
+                        <div class="col makeitbold">Negative</div>
+                        <div class="col" style="font-weight: 300;">{{nmspr}}</div>
+                        <div class="col" style="font-weight: 300;">{{nc}}</div>
+                    </div>
+                </div>
+            </div>
+            <div class="row justify-content-center">
+                <div class="col-md-6 col-10">
+                    <highcharts-chart [Highcharts]="RecHighcharts" 
+                    [constructorType]="chartConstructor" [options]="recChartOptions" 
+                    style="height: 350px; display: block;margin-top: 20px"></highcharts-chart>
+                </div>
+                <div class="col-md-6 col-10">
+                    <highcharts-chart [Highcharts]="EpsHighcharts" 
+                    [constructorType]="chartConstructor" [options]="epsChartOptions" 
+                    style="height: 350px; display: block;margin-top: 20px"></highcharts-chart>
+                </div>
+            </div>
+        </div> 
+    </mat-tab>
+</mat-tab-group>
+</div>
+<ng-template #newsmodal let-modal>
+    <div class="modal-header">
+        <!-- <div class="row"> -->
+            <div class="col-11">
+                <div class="newsSourceC">{{newsItem.source}}</div>
+                <div class="newsDateC">{{newsItem.date}}</div>
+            </div>
+            <div class="col">
+                <a type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')" style="background: none; border: none;">
+                    <!-- <span aria-hidden="true">&times;</span> --><i style="text-decoration: underline;" class="fas fa-times fa-xs"></i>
+                </a>
+            </div>
+            <div ngbAutofocus></div>
+        <!-- </div> -->
+    </div>
+    <div class="modal-body">
+        <div class="container">
+            <div class="row newsHeadlineC">{{newsItem.headline}}</div>
+            <div class="row newsSummaryC">{{newsItem.summary}}</div>
+            <div class="row newsLinkC">For more details click<a target="_blank" rel="noopener noreferrer" [href]="newsItem.newsUrl">here</a>
+            </div>
+        </div>
+    </div>
+    <div class="modal-footer" style="justify-content: flex-start;">
+        <div class="container socialMedia">
+            <div style="padding: 5px;font-size: 0.8em;">Share</div>
+            <div class="row justify-content-start" style="padding: 5px;">
+                <div class="col-2 col-md-1">
+                    <a target="_blank" rel="noopener noreferrer" class="twitter-share-button" [href]="twitterContent">
+                        <i class="fa-brands fa-x-twitter" style="color: #000000;font-size: 2em;"></i>
+                    </a>
+                </div>
+                <div class="fb-share-button col-1" data-layout="button_count" data-size="small">
+                    <a target="_blank" rel="noopener noreferrer" class="fb-xfbml-parse-ignore">
+                        <i class="fa-brands fa-square-facebook" style="color: #0000ff;font-size: 2em;"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</ng-template>
+<!-- <div class="mb-3 card h-100">
+                    <div class="col-sm-12" style="margin-right: 5%;">
+                        <img src="{{item.image}}" style="border-radius: 5px;" class="img-fluid">
+                    </div>
+                    <div>
+                        {{ item.headline }}
+                    </div>
+                </div> -->
+
+                

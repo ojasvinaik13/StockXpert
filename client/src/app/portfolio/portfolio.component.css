@@ -1,0 +1,33 @@
+.container{
+    padding: 1%;
+}
+.ptitle{
+    font-size: 2em;
+    margin-top: 3em;
+    align-self: flex-start;
+}
+.walletBal{
+    font-size: 1.3em;
+}
+.tick{
+    font-size: 1.5em;
+    font-weight: 500;
+}
+.cn{
+    margin-left: 0.5em;
+    color: rgba(0,0,0,0.6);
+    font-size: 1.2em;
+}
+.card-container{
+    padding-left: 1%;
+}
+.cdata{
+    font-size: 1.2em;
+    font-weight: 500;
+}
+i{
+    margin-left: -0.8em;
+}
+.pcards{
+    margin-bottom: 1em;
+}

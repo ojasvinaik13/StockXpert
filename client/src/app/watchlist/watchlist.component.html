@@ -1,0 +1,33 @@
+<div class ="pc">
+<div class="container col-lg-8 col-11">
+    <div class="row wtitle">My Watchlist</div>
+    <div *ngIf="!watchlistFlag" class="alert alert-warning" role="alert">
+        Currently you don't have any stock in your watchlist.
+    </div>
+    <div *ngIf="watchlistFlag">
+    <div *ngFor="let watchlistModel of watchlistModels">
+        <div class="row watchlistCard" [id]="watchlistModel.ticker" (click)="goToDetailsPage(watchlistModel.ticker);">
+            <div class="col-6 text-left">
+                <a type="button" class="close" aria-label="Close" (click)="delete($event, watchlistModel.ticker);">
+                    <i style="text-decoration: none;color:rgba(0, 0, 0, 0.5); margin-left: -0.6em;font-size: 0.6em;" class="fas fa-times fa-xs"></i>
+                </a>
+                <div class="row watchlistTicker">{{watchlistModel.ticker}}</div>
+                <div class="row watchlistName">{{watchlistModel.companyName}}</div>
+            </div>
+            <div class="col-6 text-right">
+                <div class="row wl" [ngClass]="{'text-success':watchlistModel.change>0, 'text-danger':watchlistModel.change<0,'text-dark':watchlistModel.change==0}">{{watchlistModel.lastPrice}}</div>                
+                <div class="row wch">
+                        <span  
+                        [ngClass]="{'text-success':watchlistModel.change>0, 'text-danger':watchlistModel.change<0}">
+                            <i [ngClass]="{'fas':true,'fa-sort-up':watchlistModel.change>0,'fa-sort-down':watchlistModel.change<0}" 
+                            [ngStyle]="{'vertical-align': watchlistModel.change>0 ? 'bottom': 'top','display':'inline-block' }"></i>
+                            {{watchlistModel.change}}  ({{watchlistModel.changePercentage}}%)
+                        </span>
+                </div>
+            </div>
+            </div>
+        </div>
+    </div>
+</div>
+</div>
+

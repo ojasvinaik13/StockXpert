@@ -1,0 +1,113 @@
+.tickertitle{
+    font-size: 2em;
+}
+.favstar{
+    font-size: 1.5em;
+    align-self:center;
+    font-weight: lighter;
+}
+.tickerrow{
+    display: flex;
+    justify-content: center;
+    align-items:center;    
+}
+.companyName{
+    color: #4c4f58;
+    font-size: 1.3em;
+    font-weight: 400;
+}
+.stExCode{
+    font-weight: 300;
+    font-size: 0.8em;
+}
+.marketStatus{
+    font-weight: 500;
+    font-size: 0.7em;
+}
+.lastPrice{
+    font-weight: 500;
+    /* font-size: 2em; */
+}
+
+.changeamt{
+    font-weight: 500;
+    /* font-size: 1.3em; */
+}
+.currentTimestamp{
+    font-size: 0.7em;
+}
+.sprices{
+    font-size: 0.8em;
+    line-height: 2em;
+}
+.tsprices{
+    font-weight: 500;
+}
+
+/* .card{
+    /* display: flex; */
+    /* padding:2%; */
+    /* background-color: #f8f9fa; */
+    /* align-items: center; */
+    /* font-size: 0.8em; */
+/* } */
+
+.card{
+    background-color: #f8f9fa;
+    font-size: 0.8em;
+    /* justify-content: center; */
+}
+.newsSourceC{
+    font-size: 1.4em;
+}
+.newsDateC{
+    font-size: 0.8em;
+    color: rgba(0,0,0,0.8);
+}
+.newsHeadlineC{
+    font-size: 1em;
+    font-weight: 500;
+}
+.newsSummaryC{
+    font-size: 0.8em;
+    /* font-weight: lighter; */
+}
+.newsLinkC{
+    font-size: 0.8em;
+    display: block;
+    color: rgba(0,0,0,0.6);
+}
+.newsLinkC span{
+    color: rgba(0,0,0,0.6);
+}
+.newsLinkC a {
+    display: inline;
+  }
+
+.modal-footer{
+    border: #dee2e6 1px solid;
+    margin: 1em;
+    border-radius: 5px;
+    padding: 0 !important;
+
+}
+.insititle{
+    justify-content: center;
+    font-size: 1.3em;
+    font-weight: 500;
+    display: flex;
+    justify-content: center;
+    padding: 5px;
+    letter-spacing: 1px;
+}
+.insitable{
+    text-align: center;
+    font-size: 0.9em;
+}  
+.makeitbold{
+    font-weight: 500;
+}
+.makeaborder{
+    border-bottom: #dee2e6 1px solid;
+    padding: 5px;
+}

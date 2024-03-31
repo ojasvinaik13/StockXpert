@@ -1,0 +1,49 @@
+.wtitle{
+    font-size: 2em;
+    margin-top: 3em;
+    margin-bottom: 1em;
+    align-self: flex-start;
+}
+.container {
+    margin-bottom: 30px;
+    display: flex;
+    flex-direction: column;
+}
+.pc{
+    min-height: 95vh;
+}
+.alert-warning {
+    width: 100%;
+}
+
+.watchlistCard {
+    cursor: pointer;
+    border: #dee2e6 1px solid;
+    border-radius: 5px;
+    padding: 1em;
+    margin-top: 20px;    
+}
+.text-left{
+    display: flex;
+    flex-direction: column;
+    align-items: start; 
+}
+
+.watchlistTicker {
+    font-size: 2em;
+    font-weight: 400;
+}
+
+.watchlistName {
+    font-size: 1em;
+}
+.wl {
+    text-align: right;
+    font-size: 2em;
+    padding-top: 0.8em;
+}
+.wch{
+    margin-left: -1em;
+    font-size: 1em;
+    font-weight: 400;
+}

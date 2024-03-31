@@ -1,0 +1,38 @@
+nav{
+    background-color: #1d279d !important;      
+}
+/* .navbar{
+    margin-bottom: 200px !important;
+} */
+.whitefontc{
+    color: rgba(255,255,255,0.6) !important;
+    font-size: 10px !important;
+}
+.navbar-brand{
+    font-size: 15px !important;
+    color: white !important;
+}
+
+.active{
+    text-align: center !important;
+    border: 1px solid white !important;
+    background-color: transparent !important;
+    border-radius: 10px !important;
+    /* width: 4vw; */
+    /* padding-left: 15px !important;
+    padding-right: 15px !important;  */
+}
+.nav-link{
+    padding-left: 1vw !important;
+    padding-right: 1vw !important;
+}
+
+.nav-link:hover{
+    color: white !important;
+}
+.navbar-toggler{
+    border-color: rgba(255,255,255,0.4) !important;
+}
+.navbar-toggler-icon{
+    border-color: white !important;
+}

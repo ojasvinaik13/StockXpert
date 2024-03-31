@@ -1,0 +1,47 @@
+.stocksearchtitle{
+    font-size: 180%;
+    display: flex;
+    justify-content: center;
+    padding-top: 70px;       
+}
+.searchcontainer{
+    margin: 20px auto 100px auto;
+}
+.input-group{
+    /* width: 30%; */
+    max-height: 10px;        
+}
+#searchBtn{        
+    border: solid 3px;
+    border-left: none;
+    border-right: none;
+    border-color: #1d279d;
+    max-height: 5vh;
+    --bs-btn-padding-y: 0.275rem;    
+}
+
+#clearBtn{        
+    border: solid 3px;
+    border-left: none;
+    border-top-right-radius: 20px;
+    border-bottom-right-radius: 20px;
+    border-color: #1d279d;
+    max-height: 5vh;
+    --bs-btn-padding-y: 0.275rem;
+        
+}
+.form-control{
+    border: solid 3px;
+    border-right: none;
+    border-radius: 20px;
+    border-color: #1d279d;
+    max-height: 5vh;
+    font-size: 0.7rem;
+}
+.form-control:focus{
+    box-shadow: none;
+}
+
+.fas{
+    color: #1d279d;
+}
