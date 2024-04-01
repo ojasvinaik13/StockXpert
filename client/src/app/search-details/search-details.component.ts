@@ -154,7 +154,7 @@ epsData = [];
       }
       else{
         this.isfavorite=true;
-        this.watchlistService.addToWatchlist(this.ticker).subscribe();
+        this.watchlistService.addToWatchlist({"ticker":this.ticker,"companyName":this.details.companyDetailsModel.name}).subscribe();
       }
     }
     fetchDetails(firstFlag:boolean){

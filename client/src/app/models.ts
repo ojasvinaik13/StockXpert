@@ -1,25 +1,27 @@
-// import { StockDetailsModel } from '../models';
-
 export class DetailsModel {
     companyDetailsModel: CompanyDetailsModel;
     stockQuoteModel: StockQuoteModel;
     peersModel: PeersModel;
     historicalModel: HistoricalModel;
 }
+
 export class ChartsInsightsModel {
     historicalModel: HistoricalModel;
     recommendationTrendsModel: RecommendationTrendsModel;
     insiderModel: InsiderModel;
     earningsModel: EarningsModel
 }
+
 export class SearchTerm {
     ticker: string;
     name: string;
 }
+
 export interface SearchAC {
     count: number;
     result: [];
 }
+
 export class CompanyDetailsModel {
     exchange: string;
     finnhubIndustry: string;
@@ -29,6 +31,7 @@ export class CompanyDetailsModel {
     ticker: string;
     weburl: string;  
 }
+
 export class StockQuoteModel {
     c:number;
     d:number;
@@ -39,12 +42,15 @@ export class StockQuoteModel {
     pc:number;
     t:number;
 }
+
 export class HistoricalModel{
     results:[]
 }
+
 export class NewsModel{
     results:NewsItem[]
 }
+
 export class NewsItem{
     category:string;
     datetime:Date;
@@ -56,9 +62,11 @@ export class NewsItem{
     summary:string;
     url:string;
 }
+
 export class RecommendationTrendsModel{
     results:RecTrend[]
 }
+
 export class RecTrend{
     buy:number;
     hold:number;
@@ -68,10 +76,12 @@ export class RecTrend{
     strongSell: number;
     symbol: string;
 }
+
 export class InsiderModel{
     data:Insider[];
     symbol:string;
 }
+
 export class Insider{
     symbol: string;
     year: number;
@@ -79,12 +89,15 @@ export class Insider{
     change: number;
     mspr: number;
 }
+
 export class PeersModel{
     results:[]
 }
+
 export class EarningsModel{
     results:Earn[]
 }
+
 export class Earn{
     actual: number;
     estimate: number;
@@ -95,6 +108,7 @@ export class Earn{
     symbol: string;
     year: number;
 }
+
 export class WatchlistModel{
     companyName: string;
     ticker: string;
@@ -102,6 +116,7 @@ export class WatchlistModel{
     change: number;    
     changePercentage: number;    
 }
+
 export class PortfolioModel{
     companyName: string;
     ticker: string;
@@ -112,15 +127,39 @@ export class PortfolioModel{
     currentPrice: number;
     marketValue: number;
 }
+
 export class IWL{
-    flag:boolean
+    flag:boolean;
 }
+
 export class WatchlistItems{
-    results:[]
+    results: WL[];
 }
+
 export class WL{
-    ticker:string
+    _id:string;
+    ticker:string;
+    companyName:string;
 }
+
+export class Bal{
+    _id:string;
+    wallet:number;
+}
+
+export class PL{
+    _id:string;
+    ticker:string;
+    companyName:string;
+    timestamp:Date;
+    price:number;
+    quantity:number;
+}
+
+export class PortfolioList{
+    results:PL[];
+}
+
 export class Urls {
     public static searchUrl: string = 'http://localhost:3000/autocomplete?searchInput=';
     public static companyUrl: string = 'http://localhost:3000/search/company/';
@@ -134,6 +173,7 @@ export class Urls {
     public static iswlUrl: string = 'http://localhost:3000/isonwatchlist/';
     public static delwlUrl: string = 'http://localhost:3000/delfromwatchlist/';
     public static addwlUrl: string = 'http://localhost:3000/addtowatchlist/';
-    public static getwlUrl: string = 'http://localhost:3000/getwatchlist/'; 
-
+    public static getwlUrl: string = 'http://localhost:3000/getwatchlist/';
+    public static getBalUrl: string = 'http://localhost:3000/getBalance/';
+    public static getPorUrl: string = 'http://localhost:3000/getportfolio/';
 }

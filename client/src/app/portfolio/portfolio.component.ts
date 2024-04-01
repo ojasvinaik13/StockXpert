@@ -1,8 +1,10 @@
 import { Component } from '@angular/core';
-import { PortfolioModel } from '../models';
+import { PL, PortfolioModel } from '../models';
 import { FormControl } from '@angular/forms';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { Router } from '@angular/router';
+import { PortfolioService } from '../services/portfolio.service';
+import { WatchlistService } from '../services/watchlist.service';
 
 @Component({
   selector: 'app-portfolio',
@@ -13,21 +15,8 @@ export class PortfolioComponent {
   portfolioFlag:boolean;
   portfolioModel: PortfolioModel;
   walletBalance: number;
-  portfolioModels:PortfolioModel[] = [{companyName: "Apple",
-    ticker: "AAPL",
-    quantity: 3.0,
-    avgCostPerShare: 184.22,
-    totalCost: 552.22,
-    change:-0.8,
-    currentPrice:184.33,
-    marketValue: 552.78},{companyName: "Apple",
-    ticker: "AAPL",
-    quantity: 3.0,
-    avgCostPerShare: 184.22,
-    totalCost: 552.22,
-    change:-0.8,
-    currentPrice:184.33,
-    marketValue: 552.78}];
+  list: PL[];
+  portfolioModels: PortfolioModel[] =[];
 
     // portfolioStorage: PortfolioStorageModel[]
     noPortfolio: boolean
@@ -59,9 +48,54 @@ export class PortfolioComponent {
 
     closeResult = '';
 
-    constructor(private modalService: NgbModal,  private router: Router) { }
+  constructor(private modalService: NgbModal,  private router: Router, private portfolioService: PortfolioService,private watchlistService: WatchlistService,) { }
+
   ngOnInit(): void {
     this.portfolioFlag=true;
-    this.walletBalance=25000;
+    this.getBalance();
+    this.getPortfolio();
   }
+
+  getBalance(){
+    this.portfolioService.getBalance().subscribe(res=>{
+      this.walletBalance = res.wallet;
+    });
+  }
+  getPortfolio(){
+    this.portfolioService.getPortfolio().subscribe(res=>{
+      this.list = res.results;
+      for(let i=0;i<this.list.length;i++){
+        let obj = this.list[i];
+        let t = obj.ticker;
+        this.watchlistService.fetchStockquote(t).subscribe(res=>{
+          let cp = parseFloat(res.c.toFixed(2));
+          let ind = this.portfolioModels.findIndex(item => item.ticker === t);
+        if(ind!==-1){
+          // console.log("hello");
+          this.portfolioModels[ind].quantity += obj.quantity;
+          this.portfolioModels[ind].totalCost += obj.price*obj.quantity;
+          this.portfolioModels[ind].totalCost = parseFloat(this.portfolioModels[ind].totalCost.toFixed(2));
+          this.portfolioModels[ind].avgCostPerShare = parseFloat((this.portfolioModels[ind].totalCost/this.portfolioModels[ind].quantity).toFixed(2));
+          this.portfolioModels[ind].currentPrice = cp;
+          this.portfolioModels[ind].change = parseFloat((this.portfolioModels[ind].avgCostPerShare - cp).toFixed(2));
+          this.portfolioModels[ind].marketValue = parseFloat((this.portfolioModels[ind].quantity*cp).toFixed(2));
+        }
+        else{
+          // console.log("hi");
+          this.portfolioModels.push({
+            "ticker":t,
+            "companyName":obj.companyName,
+            "quantity":obj.quantity,
+            "totalCost":parseFloat((obj.price*obj.quantity).toFixed(2)),
+            "avgCostPerShare":parseFloat(obj.price.toFixed(2)),
+            "currentPrice":cp,
+            "change":parseFloat((obj.price-cp).toFixed(2)),
+            "marketValue":parseFloat((obj.quantity*cp).toFixed(2))
+          });
+        }
+        })   
+      }
+    });
+  }
+
 }

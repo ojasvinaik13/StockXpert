@@ -70,7 +70,7 @@ app.get("/", (req, res) => {
 });
 
 app.get("/getwatchlist", (req, res)=>{
-    db.collection('watchlist').find({}).toArray().then((data) => res.send(data).status(200))
+    db.collection('watchlist').find().toArray().then((data) => res.send({"results": data}).status(200))
     .catch((error) => res.status(error).json({ error: 'Internal server error' }));
 });
 app.get("/isonwatchlist/:ticker", (req, res)=>{
@@ -97,7 +97,7 @@ app.post("/addtowatchlist", (req, res)=>{
     try{
         const data = req.body;
         // console.log(data);
-        result = db.collection('watchlist').insertOne({"ticker":data["ticker"]});
+        result = db.collection('watchlist').insertOne({"ticker":data["ticker"],"companyName":data["companyName"]});
         res.status(201).json({ message: 'Document added successfully', insertedId: result.insertedId });
     }catch (error) {
         console.error('Error adding document:', error);
@@ -105,11 +105,15 @@ app.post("/addtowatchlist", (req, res)=>{
       }  
     
 });
-// app.get("/watchlist", async (req, res) => {
-//     let collection = await db.collection("watchlist");
-//     let results = await collection.find({}).limit(50).toArray();
-//     res.send(results).status(200);
-//   });
+app.get("/getBalance", (req, res)=>{
+    db.collection('portfolio').findOne({"wallet": { $exists: true }}).then((data) => res.send(data).status(200))
+    .catch((error) => res.status(error).json({ error: 'Internal server error' }));
+});
+app.get("/getportfolio", (req, res)=>{
+    db.collection('portfolio').find({"ticker": { $exists: true }}).toArray().then((data) => res.send({"results": data}).status(200))
+    .catch((error) => res.status(error).json({ error: 'Internal server error' }));
+});
+
 
 app.get("/search/company/:ticker", (req, res) => {
     res.setHeader('Content-Type', 'application/json');
