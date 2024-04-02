@@ -15,7 +15,9 @@
 .alert-warning {
     width: 100%;
 }
-
+.alert{
+    justify-content: center;
+}
 .watchlistCard {
     cursor: pointer;
     border: #dee2e6 1px solid;

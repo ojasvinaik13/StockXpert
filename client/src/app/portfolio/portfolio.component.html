@@ -1,10 +1,14 @@
-<!-- <mat-spinner [diameter]="100" *ngIf="showSpinner" class="myspinner">
-</mat-spinner> -->
 <div *ngIf="!showSpinner" class="mx-auto">
     <div class="container col-lg-9 col-11">
         <div class="ptitle">My Portfolio</div>
         <div class="walletBal">Money in Wallet: {{walletBalance}}$</div>
-        <div *ngIf="!portfolioFlag" class="alert alert-warning" role="alert">Currently you don't have any stock.</div>
+        <div *ngIf="!portfolioFlag" class="row alert alert-warning" role="alert">Currently you don't have any stock.</div>
+        <div *ngIf="itemBoughtFlag" class="row alert alert-success alert-dismissible" role="alert">{{itemBought}} bought successfully.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        <div *ngIf="itemSoldFlag" class="row alert alert-danger alert-dismissible" role="alert">{{itemSold}} sold successfully.
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
         <div *ngIf="portfolioFlag">
             <div *ngFor="let portfolioModel of portfolioModels">
                 <div class="card pcards">
@@ -75,82 +79,89 @@
                         </div>
                     </div>
                     <div class="card-footer">
-                        <a class="btn btn-primary buy-button" style="margin-right: 0.7em;">Buy</a>
-                        <a class="btn btn-danger sell-button" >Sell</a>
+                        <a class="btn btn-primary buy-button" style="margin-right: 0.7em;" (click)="open(buystockmodal);buystockpopup(portfolioModel)">Buy</a>
+                        <a class="btn btn-danger sell-button" (click)="open(sellstockmodal);sellstockpopup(portfolioModel)">Sell</a>
                     </div>
                 </div>
             </div>
         </div>
     </div>
 </div>
-
 <ng-template #buystockmodal let-modal>
-    <div class="modal-header">
+    <div class="modal-header" style="display: block;">
         <div class="row">
-            <div class="col">
-                <div class="row stock-ticker-popup">{{buyStockTicker}}</div>
+            <div class="col-11">
+                <div class="row buytitle">{{portItem.ticker}}</div>
             </div>
-            <div class="col">
-                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="col-1">
+                <a type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')" style="background: none; border: none;">
+                    <i style="text-decoration: underline;" class="fas fa-times fa-xs"></i>
+                </a>
             </div>
         </div>
     </div>
     <div class="modal-body">
         <div class="container">
-            <div class="row current-price-popup">Current Price: {{buyStockCurrentPriceStr}}</div>
+            <div class="row buyitems">Current Price: {{portItem.currentPrice}}</div>
+            <div class="row buyitems">Money in Wallet: {{walletBalance}}</div>
             <form>
-                <div class="form-group form-inline">
-                    <label for="popup-quantity" class="quantity-label">Quantity</label>
-                    <input ngbAutofocus id="popup-quantity" class="form-control" name="popup-quantity" type="number" min="0" step="1" value="0" [formControl]="buyControl" />
+                <div class="row">
+                    <label for="popup-quantity" class="quantity-label col-3">Quantity:</label>
+                    <input ngbAutofocus id="buyinp" class="form-control col" name="popup-quantity" type="number" min="0" step="1" value="0" [formControl]="fc" />
+                    <div class="row buyitems text-danger" *ngIf="notenoughmoney">Not enough money in wallet!</div>
                 </div>
             </form>
         </div>
     </div>
     <div class="modal-footer">
-        <div class="row my-popup-footer">
-            <div class="col total-cost">
-                <span>Total : {{buyTotalStr}}</span>
+        <div class="row buy-popup-footer">
+            <div class="col totalcost">
+                <span>Total: {{totalCostforBuying}}</span>
+                <!-- Code Credit for the modals - Referred from an article online -->
             </div>
             <div class="col">
-                <button type="button" class="btn btn-success my-popup-button" [disabled]="!stockbuyable" >Buy</button>
+                <button type="button" class="btn btn-success popup-buy-button" [disabled]="!buyFlag" 
+                (click)="buyStock(portItem.ticker,portItem.companyName,portItem.currentPrice,fc.value);modal.dismiss('Cross click')">Buy</button>
             </div>
         </div>
     </div>
 </ng-template>
 
 <ng-template #sellstockmodal let-modal>
-    <div class="modal-header">
+    <div class="modal-header" style="display: block;">
         <div class="row">
-            <div class="col">
-                <div class="row stock-ticker-popup">{{sellStockTicker}}</div>
+            <div class="col-11">
+                <div class="row buytitle">{{portItem.ticker}}</div>
             </div>
-            <div class="col">
-                <button type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')">
-                    <span aria-hidden="true">&times;</span>
-                </button>
+            <div class="col-1">
+                <a type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')" style="background: none; border: none;">
+                    <i style="text-decoration: underline;" class="fas fa-times fa-xs"></i>
+                </a>
             </div>
         </div>
     </div>
     <div class="modal-body">
         <div class="container">
-            <div class="row current-price-popup">Current Price: {{sellStockCurrentPriceStr}}</div>
+            <div class="row buyitems">Current Price: {{portItem.currentPrice}}</div>
+            <div class="row buyitems">Money in Wallet: {{walletBalance}}</div>
             <form>
-                <div class="form-group form-inline">
-                    <label for="popup-quantity" class="quantity-label">Quantity</label>
-                    <input ngbAutofocus id="popup-quantity" class="form-control" name="popup-quantity" type="number" min="0" step="1" value="0" [formControl]="sellControl" />
+                <div class="row">
+                    <label for="popup-quantity" class="quantity-label col-3">Quantity:</label>
+                    <input id="buyinp" class="form-control col" [attr.autofocus]="false" name="popup-quantity" type="number" min="0" step="1" value="0" [formControl]="fc2" />
                 </div>
             </form>
+            <div class="row buyitems text-danger" *ngIf="donthavetext">You cannot sell the stocks that you don't have!</div>
         </div>
     </div>
     <div class="modal-footer">
-        <div class="row my-popup-footer">
-            <div class="col total-cost">
-                <span>Total : {{sellTotalStr}}</span>
+        <div class="row buy-popup-footer">
+            <div class="col totalcost">
+                <span>Total: {{totalCostforSelling}}</span>
+                <!-- Code Credit for the modals - Referred from an article online -->
             </div>
             <div class="col">
-                <button type="button" class="btn btn-success my-popup-button" [disabled]="!stockSellable" >Sell</button>
+                <button type="button" class="btn btn-danger popup-buy-button" [disabled]="!sellFlag2" 
+                (click)="sellStock(portItem.ticker, fc2.value, portItem.currentPrice);modal.dismiss('Cross click')">Sell</button>
             </div>
         </div>
     </div>

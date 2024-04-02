@@ -18,56 +18,28 @@ client.connect().then((client)=>{
     console.log('Connected to MongoDB');
 }).catch((error) => console.error('Error connecting to MongoDB:', error));
 //Code Credit - From MongoDB Website
-// async function run() {
-//   try {
-//     // await client.connect();
-//     const db = client.db("hw3");
-//     const watchlist = db.collection('watchlist');
-
-//     // console.log(watchlist.collectionName);
-//   } 
-//   finally {
-//     await client.close();
-//   }
-// }
-// run().catch(console.dir);
-
 
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 3000;
 // app.use(cors());
-app.use(cors({
-    origin: 'http://localhost:4200',
-    methods: ['GET', 'POST', 'PUT', 'DELETE']
-}));
+// app.use(cors({
+//     origin: 'http://localhost:4200',
+//     methods: ['GET', 'POST', 'PUT', 'DELETE']
+// }));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-// app.use((req, res, next) => {
-//     res.setHeader('x-content-type-options', 'nosniff');
-//     next();
-//   });
-//   app.use((req, res, next) => {
-//     res.removeHeader('Expires');
-//     next();
-//   });
-  
-  // Middleware to set 'Cache-Control' header
-//   app.use((req, res, next) => {
-//     res.setHeader('Cache-Control', 'no-store');
-//     next();
-//   });
-//   app.use((req, res, next) => {
-//     res.setHeader('Server', 'Express');
-//     next();
-//   });
+
 const apikey1 = "co3igm9r01qq6k8jef2gco3igm9r01qq6k8jef30";
 const apikey2 = "cSoJQ40pXp1iQg28eqfYj0cOs3MhtTXY"
+const apikey3 = "co5neehr01qrjq1gcc6gco5neehr01qrjq1gcc70"
+const apikey4 = "co5nf9hr01qrjq1gce7gco5nf9hr01qrjq1gce80"
 
-app.listen(port, () => console.log(`Server listening at port ${port}`));
+app.listen(PORT, () => console.log(`Server listening at port ${PORT}`));
 
-app.get("/", (req, res) => {
-    res.sendFile(path.join(__dirname, "../client/index.html"));
-});
+// app.get("/", (req, res) => {
+//     res.sendFile(path.join(__dirname, "./dist/client/browser/index.html"));
+// });
+app.use(express.static('dist/client/browser'));
 
 app.get("/getwatchlist", (req, res)=>{
     db.collection('watchlist').find().toArray().then((data) => res.send({"results": data}).status(200))
@@ -113,16 +85,62 @@ app.get("/getportfolio", (req, res)=>{
     db.collection('portfolio').find({"ticker": { $exists: true }}).toArray().then((data) => res.send({"results": data}).status(200))
     .catch((error) => res.status(error).json({ error: 'Internal server error' }));
 });
+app.post("/buystock", (req, res)=>{
+    try{
+        const data = req.body;
+        // console.log(data);
+        result = db.collection('portfolio').insertOne({"ticker":data["ticker"],"companyName":data["companyName"],
+        "timestamp":data["timestamp"],"price":data["price"],"quantity":data["quantity"]});
+        res.status(201).json({ message: 'Document added successfully', insertedId: result.insertedId });
+    }catch (error) {
+        console.error('Error adding document:', error);
+        res.status(500).json({ message: 'Internal server error' });
+      }  
+});
+
+app.put("/updateBalance",(req,res)=>{
+    try{
+        const data = req.body.wallet;
+        // console.log(data);
+        result = db.collection('portfolio').updateOne({"wallet":{$exists:true}},{$set: { "wallet": data }})
+        res.status(201).json({ message: 'Wallet balance updated successfully', insertedId: result.insertedId });
+    }catch (error) {
+        console.error('Error adding document:', error);
+        res.status(500).json({ message: 'Internal server error' });
+      }
+
+});
+app.put("/sellstock",async(req,res)=>{
+    try{
+        const ticker = req.body.ticker;
+        const quantity = req.body.quantity;
+        let remainingQuantity = quantity;
+        const documents = await db.collection('portfolio').find({ ticker: ticker }).sort({ timestamp: 1 }).toArray();
+        for (let doc of documents) {
+            if (remainingQuantity <= 0) {
+              break;
+            }
+            else if(remainingQuantity>=doc.quantity){
+                db.collection('portfolio').deleteOne({ _id: doc._id });
+                remainingQuantity -= doc.quantity;
+            }
+            else{
+            let quantityToUpdate = Math.min(remainingQuantity, doc.quantity);
+            await db.collection('portfolio').updateOne({ _id: doc._id }, { $inc: { quantity: -quantityToUpdate } });
+            remainingQuantity -= quantityToUpdate;
+            }
+          }
+        res.status(201).json({ message: 'Updated successfully'});
+    }catch (error) {
+        console.error('Error updating document:', error);
+        res.status(500).json({ message: 'Internal server error' });
+      }
+});
 
 
 app.get("/search/company/:ticker", (req, res) => {
     res.setHeader('Content-Type', 'application/json');
-    // if (!isValidTicker(req.params.ticker)) {
-    //     res.status(404).send({ 'error': 'invalid ticker' })
-    // } else {
-        // const params = { 'token': 'cn8png1r01qocbpguaq0cn8png1r01qocbpguaqg' }
-        fetch(`https://finnhub.io/api/v1/stock/profile2?symbol=${req.params.ticker}&token=${apikey1}`) 
-        // + new URLSearchParams(params))
+        fetch(`https://finnhub.io/api/v1/stock/profile2?symbol=${req.params.ticker}&token=${apikey3}`)
             .then(data1 => {
                 if (data1.status === 200) {
                     // console.log(datarec);
@@ -196,7 +214,7 @@ app.get("/search/historical/:ticker", (req, res) => {
 
 app.get("/search/stockquote/:ticker", (req, res) => {
     res.setHeader('Content-Type', 'application/json');   
-    fetch(`https://finnhub.io/api/v1/quote?symbol=${req.params.ticker}&token=${apikey1}`).then(data1 => {
+    fetch(`https://finnhub.io/api/v1/quote?symbol=${req.params.ticker}&token=${apikey4}`).then(data1 => {
             if (data1.status === 200) {
                 return data1.json();
             } else {                    
@@ -321,80 +339,3 @@ app.get("/search/company-earnings/:ticker", (req, res) => {
             res.status(err.status).send({ 'Error': err.reason })
         })     
 });
-
-/*
-
-api.get('/search', async (req: Request, res) => {
-    try {
-        const query = Parser.parseStringParameter(req.query.query);
-        const data = await Service.search(query);
-        return Response.sendOk(res, data);
-    } catch (error) {
-        return Response.sendError(res, error);
-    }
-});
-export const parseStringParameter = (value: any): string => {
-    if (!Validator.isNonEmptyString(value)) {
-        throw new BadRequestError();
-    }
-    return (value as string).trim();
-};
-export const isNonEmptyString = (value: any): boolean => value && typeof value === 'string' && (value as string).trim().length > 0;
-
-export const isNonEmptyArray = (value: any): boolean => Array.isArray(value) && (value as any[]).length > 0;
-
-export const isNumber = (value: any): boolean => typeof value === "number";
-
-export const search = async (query: string): Promise<SearchResultItem[]> => {
-    const items = await Tiingo.search(query);
-    const searchResultItems: SearchResultItem[] = [];
-    items.forEach(item => {
-        try {
-            searchResultItems.push({
-                ticker: Parser.parseString(item.ticker),
-                name: Parser.parseString(item.name)
-            });
-        } catch (error) {
-            // Skip item
-        }
-    });
-    return Parser.parseArray(searchResultItems);
-};
-
-export const search = async (query: string): Promise<any[]> => {
-    const url = buildURL(`tiingo/utilities/search/${query}`);
-    const data = await get(url, {
-        columns: 'ticker,name'
-    });
-    return Parser.parseArray(data);
-};
-const get = async (url: string, params: { [param: string]: any } = {}) => {
-    params.token = Token;
-    return await Request.get(url, params);
-};
-
-export const get = async (url: string, params: { [param: string]: any } = {}): Promise<any> => {
-    let response: AxiosResponse;
-    try {
-        response = await Axios.get(url, {
-            params
-        });
-    } catch (error) {
-        if (error.response) {
-            const status = error.response.status;
-            if (status === 404) {
-                throw new NotFoundError();
-            } else {
-                throw new UncheckedError(status);
-            }
-        } else {
-            throw new NetworkError();
-        }
-    }
-    if (!response.data) {
-        throw new NotFoundError();
-    }
-    return response.data;
-};
-
-*/

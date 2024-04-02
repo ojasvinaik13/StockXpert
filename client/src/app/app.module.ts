@@ -40,7 +40,6 @@ import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
     ReactiveFormsModule,
     MatInputModule,
     BrowserAnimationsModule,
-    NoopAnimationsModule,
     MatProgressSpinnerModule,
     MatTabsModule,
     HighchartsChartModule,

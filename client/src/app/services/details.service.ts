@@ -44,6 +44,9 @@ export class DetailsService{
         else if(today==6){
             x = 2;
         }
+        else if(today==1){
+            x = 4;
+        }
         else{
             x = 1;
         }
@@ -90,5 +93,15 @@ export class DetailsService{
                 })
             ); 
         }
+    }
+
+    buyStock(data:{}){
+        return this._http.post(Urls.buyUrl,data).pipe();
+    }
+    updateWallet(balance:number){
+        return this._http.put(Urls.updateBalUrl,{"wallet":balance}).pipe();
+    }
+    sellStock(data:{}){
+        return this._http.put(Urls.sellstockUrl,data).pipe();
     }
 }

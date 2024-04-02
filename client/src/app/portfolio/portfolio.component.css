@@ -31,3 +31,53 @@ i{
 .pcards{
     margin-bottom: 1em;
 }
+.alert{
+    justify-content: center;
+    font-size: 0.8em;
+    margin-top: 1em;
+}
+.alert-warning{
+    color: black;
+}
+.totalcost {
+    float: left;
+    font-size: 0.8em;
+}
+
+.popup-buy-button {
+    float: right;
+}
+
+.modal-footer{
+    border-radius: 5px;
+    padding: 0 !important;
+}
+.buy-popup-footer {
+    width: 1000px;
+}
+
+.buytitle {
+    font-size: 0.8em;
+    /* width: 380px; */
+    margin-top: 1em;
+    margin-left: 1em;
+}
+
+.quantity-label {
+    margin-right: 5px;
+    font-size: 0.8em;
+}
+
+#buyinp{
+    font-size: 0.8em;
+}
+
+.buymodal{
+    font-size: 0.8em;
+}
+
+.buyitems {
+    margin-left: 1px;
+    margin-bottom: 4px;
+    font-size: 0.8em;
+}

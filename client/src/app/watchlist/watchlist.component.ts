@@ -28,10 +28,14 @@ export class WatchlistComponent implements OnInit{
   delete(e, ticker) {
     this.watchlistService.deleteFromWatchlist(ticker).subscribe();
     document.getElementById(ticker).remove();
+    this.getWatchlistItems();
     e.stopPropagation();
  }
  getWatchlistItems(){
   this.watchlistService.getAll().subscribe(res=>{
+    if(res.length==0){
+      this.watchlistFlag=false;
+    }
     this.items = res;
     for(let i=0;i<this.items.length;i++){
       let t = this.items[i].ticker;

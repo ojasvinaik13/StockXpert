@@ -43,15 +43,6 @@
 .tsprices{
     font-weight: 500;
 }
-
-/* .card{
-    /* display: flex; */
-    /* padding:2%; */
-    /* background-color: #f8f9fa; */
-    /* align-items: center; */
-    /* font-size: 0.8em; */
-/* } */
-
 .card{
     background-color: #f8f9fa;
     font-size: 0.8em;
@@ -85,11 +76,12 @@
   }
 
 .modal-footer{
-    border: #dee2e6 1px solid;
-    margin: 1em;
     border-radius: 5px;
     padding: 0 !important;
-
+}
+.newsfooter{
+    margin: 1em;
+    border: #dee2e6 1px solid;
 }
 .insititle{
     justify-content: center;
@@ -110,4 +102,43 @@
 .makeaborder{
     border-bottom: #dee2e6 1px solid;
     padding: 5px;
+}
+.buy-popup-footer {
+    width: 1000px;
+}
+
+.buytitle {
+    font-size: 0.8em;
+    /* width: 380px; */
+    margin-top: 1em;
+    margin-left: 1em;
+}
+
+.quantity-label {
+    margin-right: 5px;
+    font-size: 0.8em;
+}
+
+.buyitems {
+    margin-left: 1px;
+    margin-bottom: 4px;
+    font-size: 0.8em;
+}
+#buyinp{
+    font-size: 0.8em;
+}
+.totalcost {
+    float: left;
+    font-size: 0.8em;
+}
+
+.popup-buy-button {
+    float: right;
+}
+.buymodal{
+    font-size: 0.8em;
+}
+
+.alert{
+    justify-content: center;
 }

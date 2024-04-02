@@ -13,15 +13,7 @@ export class PortfolioService{
     
 
     constructor(private _http: HttpClient) { }
-    
-    // getBalance(){
-    //     return this._http.get<Bal>(Urls.getwlUrl).pipe(concatMap(res=>{
-    //         this.watchlistitems = new WatchlistItems();
-    //         this.watchlistitems = res;
-    //         // console.log(this.watchlistitems.results);
-    //         return of(this.watchlistitems.results)
-    //     }));
-    // }
+
     getBalance(){
         return this._http.get<Bal>(Urls.getBalUrl);
     }

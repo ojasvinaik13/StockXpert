@@ -1,6 +1,21 @@
-<search-bar></search-bar>
-<!-- <mat-spinner [diameter]="100" *ngIf="showSpinner" class="myspinner"></mat-spinner> -->
+<search-bar [searchValue]="searchText"></search-bar>
+<mat-spinner [diameter]="60" *ngIf="showSpinnerforDetails" class="spin text-center container"></mat-spinner>
+<div *ngIf="tickererror" class="container text-center alert alert-danger alert-dismissible" role="alert" style="width: 70%;">No data found. Please enter a valid ticker.
+</div>
+<div  *ngIf="showData">
 <div class = "container text-center" style="margin-top: -50px !important">
+    <div *ngIf="itemBoughtFlag" class="row alert alert-success alert-dismissible" role="alert">{{itemBought}} bought successfully.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div *ngIf="itemSoldFlag" class="row alert alert-danger alert-dismissible" role="alert">{{itemSold}} sold successfully.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div *ngIf="aw" class="row alert alert-success alert-dismissible" role="alert">{{ticker}} added to Watchlist.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+    <div *ngIf="rw" class="row alert alert-danger alert-dismissible" role="alert">{{ticker}} removed from Watchlist.
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>    
     <div class="row" style="justify-content: center !important;">
         <div class="col-md-3 col">
             <div class="tickerrow">
@@ -12,8 +27,9 @@
             </div>
             <div class="companyName">{{details.companyDetailsModel.name}}</div>
             <div class="stExCode">{{details.companyDetailsModel.exchange}}</div>
-            <div class="bsbuttons"><button type="button" class="btn btn-success">Buy</button><button 
-                type="button" class="btn btn-danger" *ngIf="alreadyBought">Sell</button>
+            <div class="bsbuttons">
+                <button type="button" class="btn btn-success" style="margin-right: 1em;" (click)="open(buystockmodal);buystockpopup();">Buy</button>
+                <button type="button" class="btn btn-danger" *ngIf="sellFlag" (click)="open(sellstockmodal);sellstockpopup();">Sell</button>
             </div>
         </div>
         <div class="col-md-3 col-3">
@@ -55,7 +71,7 @@
                         <div class="sprices"><span class="tsprices">Webpage: </span><a href="{{details.companyDetailsModel.weburl}}">
                             {{details.companyDetailsModel.weburl}}</a></div>
                         <div class="sprices tsprices">Company peers:</div>
-                        <div class="sprices"><span *ngFor="let item of details.peersModel.results"><a href="#"> {{item}}, </a></span></div>
+                        <div class="sprices"><span *ngFor="let item of details.peersModel.results"><a [href]="gotodetailspage(item)"> {{item}}, </a></span></div>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -139,6 +155,7 @@
     </mat-tab>
 </mat-tab-group>
 </div>
+</div>
 <ng-template #newsmodal let-modal>
     <div class="modal-header">
         <!-- <div class="row"> -->
@@ -148,7 +165,7 @@
             </div>
             <div class="col">
                 <a type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')" style="background: none; border: none;">
-                    <!-- <span aria-hidden="true">&times;</span> --><i style="text-decoration: underline;" class="fas fa-times fa-xs"></i>
+                    <i style="text-decoration: underline;" class="fas fa-times fa-xs"></i>
                 </a>
             </div>
             <div ngbAutofocus></div>
@@ -162,17 +179,17 @@
             </div>
         </div>
     </div>
-    <div class="modal-footer" style="justify-content: flex-start;">
+    <div class="modal-footer newsfooter" style="justify-content: flex-start;">
         <div class="container socialMedia">
             <div style="padding: 5px;font-size: 0.8em;">Share</div>
             <div class="row justify-content-start" style="padding: 5px;">
                 <div class="col-2 col-md-1">
-                    <a target="_blank" rel="noopener noreferrer" class="twitter-share-button" [href]="twitterContent">
+                    <a target="_blank" rel="noopener noreferrer" class="twitter-share-button" [href]="twitterLink">
                         <i class="fa-brands fa-x-twitter" style="color: #000000;font-size: 2em;"></i>
                     </a>
                 </div>
                 <div class="fb-share-button col-1" data-layout="button_count" data-size="small">
-                    <a target="_blank" rel="noopener noreferrer" class="fb-xfbml-parse-ignore">
+                    <a target="_blank" rel="noopener noreferrer" class="fb-xfbml-parse-ignore" [href]="fbLink">
                         <i class="fa-brands fa-square-facebook" style="color: #0000ff;font-size: 2em;"></i>
                     </a>
                 </div>
@@ -180,13 +197,85 @@
         </div>
     </div>
 </ng-template>
-<!-- <div class="mb-3 card h-100">
-                    <div class="col-sm-12" style="margin-right: 5%;">
-                        <img src="{{item.image}}" style="border-radius: 5px;" class="img-fluid">
-                    </div>
-                    <div>
-                        {{ item.headline }}
-                    </div>
-                </div> -->
+
+<ng-template #buystockmodal let-modal>
+    <div class="modal-header" style="display: block;">
+        <div class="row">
+            <div class="col-11">
+                <div class="row buytitle">{{ticker}}</div>
+            </div>
+            <div class="col-1">
+                <a type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')" style="background: none; border: none;">
+                    <i style="text-decoration: underline;" class="fas fa-times fa-xs"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="container">
+            <div class="row buyitems">Current Price: {{details.stockQuoteModel.c}}</div>
+            <div class="row buyitems">Money in Wallet: {{walletBalance}}</div>
+            <form>
+                <div class="row">
+                    <label for="popup-quantity" class="quantity-label col-3">Quantity:</label>
+                    <input ngbAutofocus id="buyinp" class="form-control col" name="popup-quantity" type="number" min="0" step="1" value="0" [formControl]="fc" />
+                    <div class="row buyitems text-danger" *ngIf="notenoughmoney">Not enough money in wallet!</div>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row buy-popup-footer">
+            <div class="col totalcost">
+                <span>Total: {{totalCostforBuying}}</span>
+                <!-- Code Credit for the modals - Referred from an article online -->
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-success popup-buy-button" [disabled]="!buyFlag" (click)="buyStock(ticker,details.companyDetailsModel.name,details.stockQuoteModel.c,fc.value);modal.dismiss('Cross click')">Buy</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
+<ng-template #sellstockmodal let-modal>
+    <div class="modal-header" style="display: block;">
+        <div class="row">
+            <div class="col-11">
+                <div class="row buytitle">{{ticker}}</div>
+            </div>
+            <div class="col-1">
+                <a type="button" class="close" aria-label="Close" (click)="modal.dismiss('Cross click')" style="background: none; border: none;">
+                    <i style="text-decoration: underline;" class="fas fa-times fa-xs"></i>
+                </a>
+            </div>
+        </div>
+    </div>
+    <div class="modal-body">
+        <div class="container">
+            <div class="row buyitems">Current Price: {{details.stockQuoteModel.c}}</div>
+            <div class="row buyitems">Money in Wallet: {{walletBalance}}</div>
+            <form>
+                <div class="row">
+                    <label for="popup-quantity" class="quantity-label col-3">Quantity:</label>
+                    <input id="buyinp" class="form-control col" [attr.autofocus]="false" name="popup-quantity" type="number" min="0" step="1" value="0" [formControl]="fc2" />
+                </div>
+            </form>
+            <div class="row buyitems text-danger" *ngIf="donthavetext">You cannot sell the stocks that you don't have!</div>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <div class="row buy-popup-footer">
+            <div class="col totalcost">
+                <span>Total: {{totalCostforSelling}}</span>
+                <!-- Code Credit for the modals - Referred from an article online -->
+            </div>
+            <div class="col">
+                <button type="button" class="btn btn-danger popup-buy-button" [disabled]="!sellFlag2" 
+                (click)="sellStock(fc2.value);modal.dismiss('Cross click')">Sell</button>
+            </div>
+        </div>
+    </div>
+</ng-template>
+
 
                 
